@@ -2,8 +2,9 @@ import random
 
 class AI:
     def __init__(self, flag, num):
-        self.flag=flag
-        self.num=num
+        self.flag=flag      #flag for strategy   
+        self.num=num        #number for strategy
+    
     def stop(self, player, turn):
         ### Random Strategy ###
         # Will roll a n sided dice, where n is the specified number. If roll a 0, stop.

@@ -2,10 +2,11 @@ from ai import AI
 
 class Player:
     def __init__(self, ai):
-        self.points = 0
-        self.move_num = 0
-        self.move_list = []
-        self.ai = ai
+        self.cols = 0                   #number of columns taken
+        self.rule_constant = 0          # keeps track of the 'rule of 28' based on research
+        self.move_list = []             #current list of moves
+        self.ai = ai                    #AI object
+    
     def add_move(self, move):
         if move not in self.move_list:
             self.move_list.append(move)
@@ -18,6 +19,7 @@ class Player:
                 #if sum of moves is less than 8 and greater than 6, add 4 points
                 elif self.move_list[0]+self.move_list[1]+self.move_list[2]<8 and self.move_list[0]+self.move_list[1]+self.move_list[2]>6:
                     self.points+=4
+    
     def move_calc(self, move):
         num=0
         if move==2 or move==12:
