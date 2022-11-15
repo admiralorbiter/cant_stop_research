@@ -3,9 +3,15 @@ from board import Board
 import copy
 import random
 
-# def make_move(b, player_num, choice, player, test):
-#     if choice in taken_columns:
-#         return 0, player
+def make_move(b, choice):
+    if type(choice) is tuple:
+        eval = b.evaluate_move(choice[0])
+        print(eval)
+        eval = b.evaluate_move(choice[1])
+        print(eval)
+    else:
+        eval = b.evaluate_move(choice)
+        print(eval)
 #     if choice not in player.move_list and len(player.move_list)>=3:
 #         return 0, player
 #     eval = b.evaluate_move(player_num, choice)
@@ -53,6 +59,19 @@ def complete_turn(b, player):
     dice = b.roll_dice(4, 6)                   # roll the dice
     results = b.dice_combinations(dice)        # calculate all possible combinations
     choice = make_choice(results, player)      # choose a combination
+    turn+=1
+    if choice!=None:
+        points= make_move(b, choice)
+        # player.points+=points
+        # if points>0:
+        #     player1.move_list=temp_player.move_list
+        #     player1.move_calc(choice[0])
+        # points, temp_player= make_move(b, player, choice[1], player2, test)
+        # player1.points+=points
+        # if points>0: 
+        #     player1.move_calc(choice[1])
+        #     player1.move_list=temp_player.move_list
+        # next=player1.ai.stop(player1, turns)
 
 def play_game(player1, player2):
     player = random.randint(1,2)                # randomly select who goes first, 1=Player 1 and 2=Player 2

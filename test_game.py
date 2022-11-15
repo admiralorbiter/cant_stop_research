@@ -11,4 +11,6 @@ if __name__ == "__main__":
     print(results)
     player1.move_list=[2, 4, 6]
     print(player1.move_list)
-    print(make_choice(results, player1))
+    choice=make_choice(results, player1)
+    if choice!=[]:
+        make_move(b, choice)

@@ -6,6 +6,7 @@ class Board:
     # (column number, number of tokens in player 1 column, number of tokens in player 2 column)
     def __init__(self):
         self.board = []
+        self.taken_columns=[] #TODO: Test this with unit tests
         for i in range(1, 12):
             self.board.append([i+1, 0, 0])
 
@@ -46,34 +47,43 @@ class Board:
     ### Evaluates if the move is valid ###
     # n - column number
     # if the column is full, returns false, else returns true
+    # TODO: Write unit tests for taken_columns
     def evaluate_move(self, n):
+        if n in self.taken_columns:
+            return False
         if n==7:
             if self.board[n-2][1]>=8 or self.board[n-1][2]>=8:
+                self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==8 or n==6:
             if self.board[n-2][1]>=7 or self.board[n-1][2]>=7:
+                self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==9 or n==5:
             if self.board[n-2][1]>=6 or self.board[n-1][2]>=6:
+                self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==10 or n==4:
             if self.board[n-2][1]>=5 or self.board[n-1][2]>=5:
+                self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==11 or n==3:
             if self.board[n-2][1]>=4 or self.board[n-1][2]>=4:
+                self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==12 or n==2:
             if self.board[n-2][1]>=3 or self.board[n-1][2]>=3:
+                self.taken_columns.append(n)
                 return False
             else:
                 return True
