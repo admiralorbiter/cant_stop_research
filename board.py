@@ -9,6 +9,20 @@ class Board:
         self.taken_columns=[] #TODO: Test this with unit tests
         for i in range(1, 12):
             self.board.append([i+1, 0, 0])
+    ### Create Test Board ###
+    # Creates a test board for testing purposes that has each column almost full
+    def test_board(self):
+        self.board[0][1]=2
+        self.board[1][1]=3
+        self.board[2][1]=4
+        self.board[3][1]=5
+        self.board[4][1]=6
+        self.board[5][1]=7
+        self.board[6][1]=6
+        self.board[7][1]=5
+        self.board[8][1]=4
+        self.board[9][1]=3
+        self.board[10][1]=2
 
     ### Roll Dice ###
     # Helper function that takes number of dice and sides to roll and returns the results in a list
@@ -52,37 +66,37 @@ class Board:
         if n in self.taken_columns:
             return False
         if n==7:
-            if self.board[n-2][1]>=8 or self.board[n-1][2]>=8:
+            if self.board[n-2][1]>=8 or self.board[n-2][2]>=8:
                 self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==8 or n==6:
-            if self.board[n-2][1]>=7 or self.board[n-1][2]>=7:
+            if self.board[n-2][1]>=7 or self.board[n-2][2]>=7:
                 self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==9 or n==5:
-            if self.board[n-2][1]>=6 or self.board[n-1][2]>=6:
+            if self.board[n-2][1]>=6 or self.board[n-2][2]>=6:
                 self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==10 or n==4:
-            if self.board[n-2][1]>=5 or self.board[n-1][2]>=5:
+            if self.board[n-2][1]>=5 or self.board[n-2][2]>=5:
                 self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==11 or n==3:
-            if self.board[n-2][1]>=4 or self.board[n-1][2]>=4:
+            if self.board[n-2][1]>=4 or self.board[n-2][2]>=4:
                 self.taken_columns.append(n)
                 return False
             else:
                 return True
         elif n==12 or n==2:
-            if self.board[n-2][1]>=3 or self.board[n-1][2]>=3:
+            if self.board[n-2][1]>=3 or self.board[n-2][2]>=3:
                 self.taken_columns.append(n)
                 return False
             else:

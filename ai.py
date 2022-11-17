@@ -17,7 +17,7 @@ class AI:
         # Will stop if the player has reached n points, where n is specified number
         # Points calculated based on previous research
         if self.flag=="rule":
-            if player.move_num>=self.num:
+            if player.rule_constant>=self.num:
                 return True
             else:
                 return False

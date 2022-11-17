@@ -3,6 +3,7 @@ from ai import AI
 class Player:
     def __init__(self, ai=AI("constant", 8)):
         self.cols = 0                   #number of columns taken
+        self.temp_cols = 0              #number of columns taken in a turn
         self.rule_constant = 0          # keeps track of the 'rule of 28' based on research
         self.move_list = []             #current list of moves
         self.ai = ai                    #AI object
