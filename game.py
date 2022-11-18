@@ -3,33 +3,13 @@ from board import Board
 from ai import AI
 import copy
 import random
-
-def make_move(b, choice, player_num, player):
-    if type(choice) is tuple:
-        eval = b.evaluate_move(choice[0])       # evaluate if the first move is valid
-        if eval == True: 
-            b.board[choice[0]-2][player_num]+=1    # add a piece to the board
-            player.add_move(choice[0])             # add the move to the player's move list
-            eval = b.evaluate_move(choice[0])      # re-evaluate the move to check if they took a column
-            if eval == False: player.temp_cols+=1  # if they took a column, add a point
-        eval = b.evaluate_move(choice[1])       # Repeat the steps with the second move
-        if eval == True: 
-            b.board[choice[1]-2][player_num]+=1
-            player.add_move(choice[1])
-            eval = b.evaluate_move(choice[1])
-            if eval == False: player.temp_cols+=1
-    else:
-        eval = b.evaluate_move(choice)          # If choice is a single move, validate one move
-        if eval == True:
-            b.board[choice-2][player_num]+=1
-            player.add_move(choice)
-            eval = b.evaluate_move(choice)
-            if eval == False: player.temp_cols+=1
-
+### Make Choice ###
+# Implements an algorithm for making a choice based on your options after the dice roll
 #TODO: Implement an AI that carefully chooses moves
 def make_choice(results, player):
-    if len(player.move_list)<3:                 # if the player has less than 3 moves, randomly choose a move
+    if len(player.move_list)<2:                 # if the player has less than 3 moves, randomly choose a move
         return results[random.randint(0,2)]
+    # elif len(player.move_list)==2:              # if the player has 2 moves, choose the move that has the most elements in the move list
     else:                                       # If the player has 3 moves, then they have to pick a move that is the move list
         choices=[]
         #Create a list of all possible moves
@@ -50,14 +30,40 @@ def make_choice(results, player):
                 return choices[i][0]
             elif choices[i][1] in player.move_list:
                 return choices[i][1]
+
+        if len(player.move_list)==2:            #Pick a random move if there are no moves that are in the move list
+            return results[random.randint(0,2)][0]
+        if len(choices)==0:return None
         return choices
+
+def make_move(b, choice, player_num, player):
+    if type(choice) is tuple:
+        eval = b.evaluate_move(choice[0])           # evaluate if the first move is valid
+        if eval == True: 
+            b.board[choice[0]-2][player_num]+=1     # add a piece to the board
+            player.add_move(choice[0])              # add the move to the player's move list
+            eval = b.evaluate_move(choice[0])       # re-evaluate the move to check if they took a column
+            if eval == False: player.temp_cols+=1   # if they took a column, add a point
+        eval = b.evaluate_move(choice[1])           # Repeat the steps with the second move
+        if eval == True: 
+            b.board[choice[1]-2][player_num]+=1
+            player.add_move(choice[1])
+            eval = b.evaluate_move(choice[1])
+            if eval == False: player.temp_cols+=1
+    else:
+        eval = b.evaluate_move(choice)              # If choice is a single move, validate one move
+        if eval == True:
+            b.board[choice-2][player_num]+=1
+            player.add_move(choice)
+            eval = b.evaluate_move(choice)
+            if eval == False: player.temp_cols+=1
 
 def complete_turn(b, player, player_num):
     turn = 0
-    oldboard = copy.deepcopy(b.board)           # copy the board so if they go bust, we can revert
-    dice = b.roll_dice(4, 6)                    # roll the dice
-    results = b.dice_combinations(dice)         # calculate all possible combinations
-    choice = make_choice(results, player)       # choose a combination
+    oldboard = copy.deepcopy(b.board)               # copy the board so if they go bust, we can revert
+    dice = b.roll_dice(4, 6)                        # roll the dice
+    results = b.dice_combinations(dice)             # calculate all possible combinations
+    choice = make_choice(results, player)           # choose a combination
     turn+=1
     if choice!=None:
         make_move(b, choice, player_num, player)
@@ -68,20 +74,21 @@ def complete_turn(b, player, player_num):
             player.move_calc(choice)
         next = player.ai.stop(player, turn)
     elif choice==None:
-        b=copy.deepcopy(oldboard)               # if they go bust, revert the board
+        b=copy.deepcopy(oldboard)                   # if they go bust, revert the board
         player.temp_cols=0
     
     if next:
-        player.cols=player.temp_cols            # if the player chooses to stop, add their points to their total
-        oldboard=copy.deepcopy(b)               # copy the board so if they go bust, we can revert
-        turns=0                                 # reset the turn counter
+        player.cols=player.temp_cols                # if the player chooses to stop, add their points to their total
+        oldboard=copy.deepcopy(b)                   # copy the board so if they go bust, we can revert
+        turns=0                                     # reset the turn counter
         return next;
                
 
 def play_game(player1, player2):
-    player_num = random.randint(1,2)            # randomly select who goes first, 1=Player 1 and 2=Player 2
-    b = Board()                                 # initialize new board
+    player_num = random.randint(1,2)                # randomly select who goes first, 1=Player 1 and 2=Player 2
+    b = Board()                                     # initialize new board
     while player1.cols<3 and player2.cols<3:
+        print("Player 1: ", player1.cols, "Player 2: ", player2.cols)
         if player_num==1:
             next=complete_turn(b, player1, player_num)
             if next:
@@ -161,4 +168,4 @@ def sim_play_one_game():
 #     print("Player 1 won: ", player1wins)
 #     print("Player 2 won: ", player2wins)
 
-sim_play_one_game()
+# sim_play_one_game()
