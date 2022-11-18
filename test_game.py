@@ -62,6 +62,35 @@ def test_make_choice():
     choice = make_choice(results, player)
     assert choice == None
 
+#TODO: Test temp columns
+def test_make_move():
+    b = Board()
+    player = Player(AI("constant", 10))
+    player_num = 1
+
+    ## Test 1: Test 2 element choice
+    choice = (3, 4)
+    make_move(b, choice, player_num, player)
+    assert b.board[choice[0]-2][player_num] == 1
+    assert b.board[choice[1]-2][player_num] == 1
+    assert player.move_list == [3, 4]
+    assert player.temp_cols == 0
+    ## Test 2: Test single element choice
+    choice = 5
+    make_move(b, choice, player_num, player)
+    assert b.board[choice-2][player_num] == 1
+    assert player.move_list == [3, 4, 5]
+    assert player.temp_cols == 0
+    ## Test 3: Test temp column evaluation
+    choice = (3, 3)
+    make_move(b, choice, player_num, player)
+    choice = 3
+    make_move(b, choice, player_num, player)
+    assert b.board[choice-2][player_num] == 4
+    assert player.move_list == [3, 4, 5]
+    assert player.temp_cols == 1
+\
 if __name__ == "__main__":
     test_make_choice()
+    test_make_move()
     print("All tests passed!")

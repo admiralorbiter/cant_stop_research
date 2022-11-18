@@ -3,14 +3,14 @@ from board import Board
 from ai import AI
 import copy
 import random
+
 ### Make Choice ###
 # Implements an algorithm for making a choice based on your options after the dice roll
 #TODO: Implement an AI that carefully chooses moves
 def make_choice(results, player):
-    if len(player.move_list)<2:                 # if the player has less than 3 moves, randomly choose a move
+    if len(player.move_list)<2:                     # if the player has less than 3 moves, randomly choose a move
         return results[random.randint(0,2)]
-    # elif len(player.move_list)==2:              # if the player has 2 moves, choose the move that has the most elements in the move list
-    else:                                       # If the player has 3 moves, then they have to pick a move that is the move list
+    else:                                           # If the player has 3 moves, then they have to pick a move that is the move list
         choices=[]
         #Create a list of all possible moves
         for i in range(0, len(results)):
@@ -30,12 +30,14 @@ def make_choice(results, player):
                 return choices[i][0]
             elif choices[i][1] in player.move_list:
                 return choices[i][1]
-
-        if len(player.move_list)==2:            #Pick a random move if there are no moves that are in the move list
-            return results[random.randint(0,2)][0]
+        # The other cases for move_list==2 are caught by previous branches, the only case left is when none of the choices are in the move list
+        if len(player.move_list)==2:                #Pick a random move if there are no moves that are in the move list
+            return results[random.randint(0,2)][0]  #Returns a random, single element
         if len(choices)==0:return None
         return choices
 
+### Make Move ###
+# Implements the functionality for making the move once a choice has been made
 def make_move(b, choice, player_num, player):
     if type(choice) is tuple:
         eval = b.evaluate_move(choice[0])           # evaluate if the first move is valid
