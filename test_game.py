@@ -89,8 +89,14 @@ def test_make_move():
     assert b.board[choice-2][player_num] == 4
     assert player.move_list == [3, 4, 5]
     assert player.temp_cols == 1
-\
+
+def test_stop_ai():
+    player = Player(AI("constant", 10))
+    next = player.ai.stop(player, 10)
+    print(next)
+
 if __name__ == "__main__":
     test_make_choice()
     test_make_move()
+    test_stop_ai()
     print("All tests passed!")

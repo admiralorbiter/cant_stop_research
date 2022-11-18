@@ -60,13 +60,12 @@ def make_move(b, choice, player_num, player):
             eval = b.evaluate_move(choice)
             if eval == False: player.temp_cols+=1
 
-def complete_turn(b, player, player_num):
-    turn = 0
+def complete_turn(b, player, player_num, turn_num):
     oldboard = copy.deepcopy(b.board)               # copy the board so if they go bust, we can revert
     dice = b.roll_dice(4, 6)                        # roll the dice
     results = b.dice_combinations(dice)             # calculate all possible combinations
     choice = make_choice(results, player)           # choose a combination
-    turn+=1
+    next = False
     if choice!=None:
         make_move(b, choice, player_num, player)
         if type(choice) is tuple:
@@ -74,39 +73,43 @@ def complete_turn(b, player, player_num):
                 player.move_calc(choice[i])
         else:
             player.move_calc(choice)
-        next = player.ai.stop(player, turn)
+        next = player.ai.stop(player, turn_num)
     elif choice==None:
         b=copy.deepcopy(oldboard)                   # if they go bust, revert the board
         player.temp_cols=0
-    
     if next:
-        player.cols=player.temp_cols                # if the player chooses to stop, add their points to their total
         oldboard=copy.deepcopy(b)                   # copy the board so if they go bust, we can revert
-        turns=0                                     # reset the turn counter
-        return next;
+    return next;
                
 
 def play_game(player1, player2):
     player_num = random.randint(1,2)                # randomly select who goes first, 1=Player 1 and 2=Player 2
     b = Board()                                     # initialize new board
+    turn_num = 0
     while player1.cols<3 and player2.cols<3:
         print("Player 1: ", player1.cols, "Player 2: ", player2.cols)
         if player_num==1:
-            next=complete_turn(b, player1, player_num)
+            next=complete_turn(b, player1, player_num, turn_num)
+            turn_num+=1
             if next:
+                player1.cols+=player1.temp_cols
                 player_num=2
                 player2.move_list=[]
                 player2.move_num=0
                 player2.temp_cols=0
+                turn_num=0                                      # reset the turn counter
         else:
-            next=complete_turn(b, player2, player_num)
+            next=complete_turn(b, player2, player_num, turn_num)
+            turn_num+=1
             if next:
+                player2.cols+=player2.temp_cols
                 player_num=1
                 player1.move_list=[]
                 player1.move_num=0
                 player1.temp_cols=0
-    print("Player 1: ", player1.points)
-    print("Player 2: ", player2.points)
+                turn_num=0                                      # reset the turn counter
+    print("Player 1: ", player1.cols)
+    print("Player 2: ", player2.cols)
     print(b.board)
 
 
@@ -144,7 +147,7 @@ def play_game(player1, player2):
 #         wr.writerow(data)
 
 def sim_play_one_game():
-    player1 = Player(AI("rule", 28))
+    player1 = Player(AI("constant", 3))
     player2 = Player(AI("constant", 8))
     play_game(player1, player2)
 
@@ -170,4 +173,4 @@ def sim_play_one_game():
 #     print("Player 1 won: ", player1wins)
 #     print("Player 2 won: ", player2wins)
 
-# sim_play_one_game()
+sim_play_one_game()
