@@ -87,7 +87,6 @@ def play_game(player1, player2):
     b = Board()                                     # initialize new board
     turn_num = 0
     while player1.cols<3 and player2.cols<3:
-        print("Player 1: ", player1.cols, "Player 2: ", player2.cols)
         if player_num==1:
             next=complete_turn(b, player1, player_num, turn_num)
             turn_num+=1
@@ -108,10 +107,7 @@ def play_game(player1, player2):
                 player1.move_num=0
                 player1.temp_cols=0
                 turn_num=0                                      # reset the turn counter
-    print("Player 1: ", player1.cols)
-    print("Player 2: ", player2.cols)
     print(b.board)
-
 
 # def sim1():
 #     data=[]
@@ -147,9 +143,11 @@ def play_game(player1, player2):
 #         wr.writerow(data)
 
 def sim_play_one_game():
-    player1 = Player(AI("constant", 3))
+    player1 = Player(AI("constant", 8))
     player2 = Player(AI("constant", 8))
     play_game(player1, player2)
+    print("Player 1: ", player1.cols)
+    print("Player 2: ", player2.cols)
 
 # def sim3():
 #     global test
