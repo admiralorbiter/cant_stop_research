@@ -3,19 +3,58 @@ from board import Board
 from ai import AI
 import copy
 import random
+# import pdb; pdb.set_trace()
+test = False
+
+def check_taken_columns(board):
+    taken_columns = []
+    for i in range(2, len(board)+2):
+        if i==7:
+            if board[i-2][1]>=8 or board[i-2][2]>=8:
+                taken_columns.append(i)
+        elif i==8 or i==6:
+            if board[i-2][1]>=7 or board[i-2][2]>=7:
+                taken_columns.append(i)
+        elif i==9 or i==5:
+            if board[i-2][1]>=6 or board[i-2][2]>=6:
+                taken_columns.append(i)
+        elif i==10 or i==4:
+            if board[i-2][1]>=5 or board[i-2][2]>=5:
+                taken_columns.append(i)
+        elif i==11 or i==3:
+            if board[i-2][1]>=4 or board[i-2][2]>=4:
+                taken_columns.append(i)
+        elif i==12 or i==2:
+            if board[i-2][1]>=3 or board[i-2][2]>=3:
+                taken_columns.append(i)
+    return taken_columns
+
+def valid_choices(results, taken_columns):
+    for i in range(0, len(results)):
+        if results[i][0] not in taken_columns or results[i][1] not in taken_columns:
+            return True
+    return False
 
 ### Make Choice ###
 # Implements an algorithm for making a choice based on your options after the dice roll
 #TODO: Implement an AI that carefully chooses moves
-def make_choice(results, player):
+def make_choice(results, player, board):
+    taken_columns = check_taken_columns(board)
+    if valid_choices(results, taken_columns)==False: 
+        print("No valid choices")
+        return None
     if len(player.move_list)<2:                     # if the player has less than 3 moves, randomly choose a move
-        return results[random.randint(0,2)]
+        choice = results[random.randint(0,2)]
+        while choice[0] in taken_columns and choice[1] in taken_columns:
+            choice = results[random.randint(0,2)]
+        return choice
     else:                                           # If the player has 3 moves, then they have to pick a move that is the move list
         choices=[]
         #Create a list of all possible moves
         for i in range(0, len(results)):
-            if results[i][0] in player.move_list or results[i][1] in player.move_list:
-                choices.append(results[i])
+            if results[i][0] not in taken_columns or results[i][1] not in taken_columns:
+                if results[i][0] in player.move_list or results[i][1] in player.move_list:
+                    choices.append(results[i])
         
         #Start by checking if both moves are in the move list, if so choose the first
         #TODO: If there are more than 1, choose the one that will give the most points
@@ -34,6 +73,7 @@ def make_choice(results, player):
         if len(player.move_list)==2:                #Pick a random move if there are no moves that are in the move list
             return results[random.randint(0,2)][0]  #Returns a random, single element
         if len(choices)==0:return None
+        print("Choices: ", choices)
         return choices
 
 ### Make Move ###
@@ -61,10 +101,11 @@ def make_move(b, choice, player_num, player):
             if eval == False: player.temp_cols+=1
 
 def complete_turn(b, player, player_num, turn_num):
-    oldboard = copy.deepcopy(b.board)               # copy the board so if they go bust, we can revert
+    global oldboard
+    if turn_num==0: oldboard = copy.deepcopy(b)     # copy the board so if they go bust, we can revert
     dice = b.roll_dice(4, 6)                        # roll the dice
     results = b.dice_combinations(dice)             # calculate all possible combinations
-    choice = make_choice(results, player)           # choose a combination
+    choice = make_choice(results, player, b.board)  # choose a combination
     next = False
     if choice!=None:
         make_move(b, choice, player_num, player)
@@ -77,9 +118,13 @@ def complete_turn(b, player, player_num, turn_num):
     elif choice==None:
         b=copy.deepcopy(oldboard)                   # if they go bust, revert the board
         player.temp_cols=0
+        next = True
     if next:
         oldboard=copy.deepcopy(b)                   # copy the board so if they go bust, we can revert
-    return next;
+        player.cols+=player.temp_cols               # add the points to the player's total
+        player.temp_cols=0                          # reset the temp points
+        next = True
+    return next, b;
                
 
 def play_game(player1, player2):
@@ -87,27 +132,25 @@ def play_game(player1, player2):
     b = Board()                                     # initialize new board
     turn_num = 0
     while player1.cols<3 and player2.cols<3:
+        print(b.board)
         if player_num==1:
-            next=complete_turn(b, player1, player_num, turn_num)
+            next, b=complete_turn(b, player1, player_num, turn_num)
             turn_num+=1
             if next:
-                player1.cols+=player1.temp_cols
                 player_num=2
                 player2.move_list=[]
                 player2.move_num=0
                 player2.temp_cols=0
-                turn_num=0                                      # reset the turn counter
+                turn_num=0                          # reset the turn counter
         else:
             next=complete_turn(b, player2, player_num, turn_num)
             turn_num+=1
             if next:
-                player2.cols+=player2.temp_cols
                 player_num=1
                 player1.move_list=[]
                 player1.move_num=0
                 player1.temp_cols=0
-                turn_num=0                                      # reset the turn counter
-    print(b.board)
+                turn_num=0                          # reset the turn counter
 
 # def sim1():
 #     data=[]
@@ -149,6 +192,26 @@ def sim_play_one_game():
     print("Player 1: ", player1.cols)
     print("Player 2: ", player2.cols)
 
+def sim_multiple_games():
+    years = 500
+    player1wins=0
+    player2wins=0
+    for i in range(0, years):
+        if i%(years/10)==0: print(i)
+        print(i)
+        if test:print("######################################################################################################################################################")
+        player1 = Player(AI("constant", 8))
+        player2 = Player(AI("constant", 8))
+        play_game(player1, player2)
+        if player1.cols>player2.cols:
+            player1wins+=1
+        else:
+            player2wins+=1
+    print("Player 1 wins: ", player1wins)
+    print("Player 2 wins: ", player2wins)
+    print("Player 1 wins: ", player1wins/years*100, "%")
+    print("Player 2 wins: ", player2wins/years*100, "%")
+
 # def sim3():
 #     global test
 #     test=True
@@ -172,3 +235,4 @@ def sim_play_one_game():
 #     print("Player 2 won: ", player2wins)
 
 sim_play_one_game()
+# sim_multiple_games()
