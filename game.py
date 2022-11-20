@@ -3,6 +3,7 @@ from board import Board
 from ai import AI
 import copy
 import random
+import csv
 
 def check_taken_columns(board):
     taken_columns = []
@@ -147,39 +148,6 @@ def play_game(player1, player2):
                 player1.temp_cols=0
                 turn_num=0                          # reset the turn counter
 
-# def sim1():
-#     data=[]
-#     for x in range(10, 50):
-#         print(x)
-#         for y in range(2, 20):
-#             player1wins=0
-#             player2wins=0
-#             for i in range(0, years):
-#                 player1 = Player(AI("rule", x))
-#                 player2 = Player(AI("constant", y))
-#                 # randomly choose who goes first
-#                 player= random.randint(1,2)
-#                 play_game(player, player1, player2, False)
-#                 # if(i%(years/10)==0):
-#                 #     print(player1wins, player2wins)
-#                 if player1.points>player2.points:
-#                     player1wins+=1
-#                 else:
-#                     player2wins+=1
-
-#             # print("Player 1 wins: ", player1wins, "with ",x)
-#             # print("Player 2 wins: ", player2wins, "with ",y)
-#             # print(x, y, math.trunc(player1wins/years*100))
-#             data.append((x, y, math.trunc(player1wins/years*100)))
-#             # print(data)
-#             # print(x, y, "{:2f}".format(player1wins/player2wins*100))
-#     # print("Player 1 goes first: ", player11st)
-#     print(data)
-#     # export to csv
-#     with open('data.csv', 'w', newline='') as myfile:
-#         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-#         wr.writerow(data)
-
 def sim_play_one_game():
     player1 = Player(AI("constant", 8))
     player2 = Player(AI("constant", 8))
@@ -187,45 +155,35 @@ def sim_play_one_game():
     print("Player 1: ", player1.cols)
     print("Player 2: ", player2.cols)
 
-def sim_multiple_games():
-    years = 5000
+def sim_multiple_games(ai1=AI("constant", 8), ai2=AI("constant", 8)):
+    years = 500
     player1wins=0
     player2wins=0
     for i in range(0, years):
-        if i%(years/10)==0: print(i)
-        player1 = Player(AI("constant", 8))
-        player2 = Player(AI("constant", 8))
+        # if i%(years/10)==0: print(i)
+        player1 = Player(ai1)
+        player2 = Player(ai2)
         play_game(player1, player2)
         if player1.cols>player2.cols:
             player1wins+=1
         else:
             player2wins+=1
-    print("Player 1 wins: ", player1wins)
-    print("Player 2 wins: ", player2wins)
-    print("Player 1 wins: ", round(player1wins/years*100), "%")
-    print("Player 2 wins: ", round(player2wins/years*100), "%")
+    print("AI Constant", ai1.num, "wins: ", round(player1wins/years*100), "%")
+    print("AI Constant", ai2.num, "wins: ", round(player2wins/years*100), "%")
+    print("")
+    return round(player1wins/years*100)
 
-# def sim3():
-#     global test
-#     test=True
-#     player1wins = 0
-#     player2wins = 0
-#     print("starting...")
-#     for i in range(0, years):
-#         if i % 100 == 0: print("Year: ", i)
-#         player1 = Player(AI("rule", 28))
-#         player2 = Player(AI("rule", 28))
-#         # randomly choose who goes first
-#         player = random.randint(1, 2)
-#         play_game(player, player1, player2, False)
-#         # if(i%(years/10)==0):
-#         #     print(player1wins, player2wins)
-#         if player1.points > player2.points:
-#             player1wins += 1
-#         else:
-#             player2wins += 1
-#     print("Player 1 won: ", player1wins)
-#     print("Player 2 won: ", player2wins)
-
+def test_muliple_ai():
+    data=[]
+    for x in range(2, 20):
+        print(x)
+        for y in range(2, 20):
+            data.append((x, y, sim_multiple_games(AI("constant", x), AI("constant", y))))
+    print(data)
+    # export to csv
+    with open('data.csv', 'w', newline='') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+        wr.writerow(data)
 # sim_play_one_game()
-sim_multiple_games()
+# sim_multiple_games()
+test_muliple_ai()
