@@ -3,8 +3,6 @@ from board import Board
 from ai import AI
 import copy
 import random
-# import pdb; pdb.set_trace()
-test = False
 
 def check_taken_columns(board):
     taken_columns = []
@@ -41,7 +39,6 @@ def valid_choices(results, taken_columns):
 def make_choice(results, player, board):
     taken_columns = check_taken_columns(board)
     if valid_choices(results, taken_columns)==False: 
-        print("No valid choices")
         return None
     if len(player.move_list)<2:                     # if the player has less than 3 moves, randomly choose a move
         choice = results[random.randint(0,2)]
@@ -73,7 +70,6 @@ def make_choice(results, player, board):
         if len(player.move_list)==2:                #Pick a random move if there are no moves that are in the move list
             return results[random.randint(0,2)][0]  #Returns a random, single element
         if len(choices)==0:return None
-        print("Choices: ", choices)
         return choices
 
 ### Make Move ###
@@ -132,7 +128,6 @@ def play_game(player1, player2):
     b = Board()                                     # initialize new board
     turn_num = 0
     while player1.cols<3 and player2.cols<3:
-        print(b.board)
         if player_num==1:
             next, b=complete_turn(b, player1, player_num, turn_num)
             turn_num+=1
@@ -143,7 +138,7 @@ def play_game(player1, player2):
                 player2.temp_cols=0
                 turn_num=0                          # reset the turn counter
         else:
-            next=complete_turn(b, player2, player_num, turn_num)
+            next, b=complete_turn(b, player2, player_num, turn_num)
             turn_num+=1
             if next:
                 player_num=1
@@ -193,13 +188,11 @@ def sim_play_one_game():
     print("Player 2: ", player2.cols)
 
 def sim_multiple_games():
-    years = 500
+    years = 5000
     player1wins=0
     player2wins=0
     for i in range(0, years):
         if i%(years/10)==0: print(i)
-        print(i)
-        if test:print("######################################################################################################################################################")
         player1 = Player(AI("constant", 8))
         player2 = Player(AI("constant", 8))
         play_game(player1, player2)
@@ -209,8 +202,8 @@ def sim_multiple_games():
             player2wins+=1
     print("Player 1 wins: ", player1wins)
     print("Player 2 wins: ", player2wins)
-    print("Player 1 wins: ", player1wins/years*100, "%")
-    print("Player 2 wins: ", player2wins/years*100, "%")
+    print("Player 1 wins: ", round(player1wins/years*100), "%")
+    print("Player 2 wins: ", round(player2wins/years*100), "%")
 
 # def sim3():
 #     global test
@@ -234,5 +227,5 @@ def sim_multiple_games():
 #     print("Player 1 won: ", player1wins)
 #     print("Player 2 won: ", player2wins)
 
-sim_play_one_game()
-# sim_multiple_games()
+# sim_play_one_game()
+sim_multiple_games()
