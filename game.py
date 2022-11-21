@@ -156,7 +156,7 @@ def sim_play_one_game():
     print("Player 2: ", player2.cols)
 
 def sim_multiple_games(ai1=AI("constant", 8), ai2=AI("constant", 8)):
-    years = 500
+    years = 5000
     player1wins=0
     player2wins=0
     for i in range(0, years):
