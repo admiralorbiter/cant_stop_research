@@ -149,14 +149,14 @@ def play_game(player1, player2):
                 turn_num=0                          # reset the turn counter
 
 def sim_play_one_game():
-    player1 = Player(AI("constant", 8))
-    player2 = Player(AI("constant", 8))
+    player1 = Player(AI("random", 8))
+    player2 = Player(AI("random", 8))
     play_game(player1, player2)
     print("Player 1: ", player1.cols)
     print("Player 2: ", player2.cols)
 
-def sim_multiple_games(ai1=AI("constant", 8), ai2=AI("constant", 8)):
-    years = 5000
+def sim_multiple_games(ai1=AI("random", 8), ai2=AI("random", 8)):
+    years = 10000
     player1wins=0
     player2wins=0
     for i in range(0, years):
@@ -175,15 +175,15 @@ def sim_multiple_games(ai1=AI("constant", 8), ai2=AI("constant", 8)):
 
 def test_muliple_ai():
     data=[]
-    for x in range(2, 20):
+    for x in range(2, 15):
         print(x)
-        for y in range(2, 20):
-            data.append((x, y, sim_multiple_games(AI("constant", x), AI("constant", y))))
-    print(data)
-    # export to csv
-    with open('data.csv', 'w', newline='') as myfile:
-        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-        wr.writerow(data)
+        for y in range(2, 15):
+            data.append((x, y, sim_multiple_games(AI("random", x), AI("random", y))))
+        print(data)
+        # export to csv
+        with open('data.csv', 'w', newline='') as myfile:
+            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+            wr.writerow(data)
 # sim_play_one_game()
 # sim_multiple_games()
 test_muliple_ai()
