@@ -1,5 +1,6 @@
 import random
 from termcolor import colored
+import copy
 
 blue = 1
 red = 2
@@ -54,7 +55,7 @@ def match_color(color):
     elif color == 3:
         return "yellow"
     elif color == 4:
-        return "black"
+        return "green"
     elif color == 5:
         return "white"
 
@@ -71,31 +72,82 @@ def print_factory_displays():
     for i in range(0, len(factory_displays[3])):
        print(colored(factory_displays[3][i], match_color(factory_displays[3][i])), end=" ")
     print()
+    for i in range(0, len(factory_displays[4])):
+         print(colored(factory_displays[4][i], match_color(factory_displays[4][i])), end=" ")
+    print()
 
-def draw_from_factory(factory_number, color):
+def draw_from_factory(player, factory_number, color):
     if color in factory_displays[factory_number]:
         count = factory_displays[factory_number].count(color)
         factory_displays[factory_number].remove(color)
-        for i in range(0, 4-count):
-            middle_display.append(factory_displays[factory_number].pop(0))
+        if player == 1:
+            for i in range(0, count):
+                player1_tiles.append(color)
+        else:
+            for i in range(0, count):
+                player2_tiles.append(color)
+        # for i in range(0, 4-count):
+        #     middle_display.append(factory_displays[factory_number].pop(0))
+        middle_display.append(factory_displays[factory_number])
         factory_displays[factory_number]= []
         return count
     else:
         return 0
 
 
-def main():
+def number_of_colors_in_factory(factory_number):
+    return len(set(factory_displays[factory_number]))
+
+def init():
     factory_displays[0] = draw_tiles(4)
     factory_displays[1] = draw_tiles(4)
     factory_displays[2] = draw_tiles(4)
     factory_displays[3] = draw_tiles(4)
+    factory_displays[4] = draw_tiles(4)
+
+# create a copy of the states to be used
+def create_copy_of_states():
+    board_state_copy = copy.deepcopy(board_state)
+    factory_displays_copy = copy.deepcopy(factory_displays)
+    middle_display_copy = []
+    pattern_line_copy = copy.deepcopy(pattern_line)
+    tile_bag_copy = copy.deepcopy(tile_bag)
+    player1_tiles_copy = []
+    player2_tiles_copy = []
+    return board_state_copy, factory_displays_copy, middle_display_copy, pattern_line_copy, tile_bag_copy, player1_tiles_copy, player2_tiles_copy
+
+
+
+#resets the states based on the copies created
+def reset_states_based_on_copies(board_state_copy, factory_displays_copy, pattern_line_copy, tile_bag_copy, player1_tiles_copy, player2_tiles_copy):
+    middle_display = []
+    board_state = copy.deepcopy(board_state_copy)
+    factory_displays = copy.deepcopy(factory_displays_copy)
+    pattern_line = copy.deepcopy(pattern_line_copy)
+    tile_bag = copy.deepcopy(tile_bag_copy)
+    player1_tiles = copy.deepcopy(player1_tiles_copy)
+    player2_tiles = copy.deepcopy(player2_tiles_copy)
+    return board_state, factory_displays, middle_display, pattern_line, tile_bag, player1_tiles, player2_tiles
 
 if __name__ == "__main__":
-    main()
+    init()
+    zero = number_of_colors_in_factory(0)
+    one = number_of_colors_in_factory(1)
+    two = number_of_colors_in_factory(2)
+    three = number_of_colors_in_factory(3)
+    board_state_copy, factory_displays_copy, middle_display_copy, pattern_line_copy, tile_bag_copy, player1_tiles_copy, player2_tiles_copy = create_copy_of_states()
+    #Start of simulation
+    print(factory_displays_copy)
     print_factory_displays()
-    print(draw_from_factory(0, 1))
-    print(draw_from_factory(1, 1))
-    print(draw_from_factory(2, 1))
-    print(draw_from_factory(3, 1))
+    draw_from_factory(1, 0, 1)
+    draw_from_factory(2, 1, 1)
+    draw_from_factory(1, 2, 1)
+    draw_from_factory(2, 3, 1) 
+    print("Player 1 ", player1_tiles)
+    print("Player 2 ",player2_tiles)
     print(middle_display)
+    print_factory_displays()
+    print(factory_displays_copy)
+    #end of simulation
+    board_state, factory_displays, middle_display, pattern_line, tile_bag, player1_tiles, player2_tiles=reset_states_based_on_copies(board_state_copy, factory_displays_copy, pattern_line_copy, tile_bag_copy, player1_tiles_copy, player2_tiles_copy)
     print_factory_displays()
