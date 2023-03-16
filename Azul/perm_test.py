@@ -1,6 +1,9 @@
+import itertools
+import random
 import random
 from termcolor import colored
 import itertools
+import copy
 
 blue = 1
 red = 2
@@ -76,24 +79,65 @@ def print_factory_displays():
          print(colored(middle_display[i], match_color(middle_display[i])), end=" ")
     print()
 
-def draw_from_factory(factory_number, color):
-    if color in factory_displays[factory_number]:
-        count = factory_displays[factory_number].count(color)
-        factory_displays[factory_number].remove(color)
+# def draw_from_factory(factory_number, color):
+#     if color in factory_displays[factory_number]:
+#         count = factory_displays[factory_number].count(color)
+#         factory_displays[factory_number].remove(color)
+#         for i in range(0, 4-count):
+#             middle_display.append(factory_displays[factory_number].pop(0))
+#         factory_displays[factory_number]= []
+#         return count
+#     else:
+#         return 0
+    
+def draw_from_factory(display, color):
+    if color in display:
+        count = display.count(color)
+        display.remove(color)
         for i in range(0, 4-count):
-            middle_display.append(factory_displays[factory_number].pop(0))
-        factory_displays[factory_number]= []
+            if display:  # Check if the display is not empty
+                middle_display.append(display.pop(0))
+        display= []
         return count
     else:
         return 0
-
-def main():
-    factory_displays[0] = draw_tiles(4)
-    factory_displays[1] = draw_tiles(4)
-    factory_displays[2] = draw_tiles(4)
-    factory_displays[3] = draw_tiles(4)
-
-if __name__ == "__main__":
-    main()
-    print_factory_displays()
     
+def draw_permutations(factory_displays, middle_display):
+    all_permutations = []
+    middle_display_index = len(factory_displays)
+
+    for n in range(len(factory_displays), 0, -1):
+        for factory_permutation in itertools.permutations(range(n)):
+            permutation = factory_permutation + (middle_display_index,)
+            hand_states = [[], []]
+
+            # Reset factory displays and middle_display for each permutation
+            factory_displays_copy = copy.deepcopy(factory_displays)
+            middle_display_copy = []
+            middle_display = []
+
+            for draw_location in permutation:
+                if draw_location < middle_display_index:
+                    selected_tile = random.choice(factory_displays_copy[draw_location])
+                    count = draw_from_factory(factory_displays_copy[draw_location], selected_tile)
+                    hand_states[0].extend([selected_tile] * count)
+                else:
+                    while middle_display_copy:
+                        selected_tile = random.choice(middle_display_copy)
+                        hand_states[0].append(selected_tile)
+                        middle_display_copy.remove(selected_tile)
+
+            all_permutations.append((permutation, hand_states))
+
+    return all_permutations
+
+factory_displays[0] = draw_tiles(4)
+factory_displays[1] = draw_tiles(4)
+factory_displays[2] = draw_tiles(4)
+factory_displays[3] = draw_tiles(4)
+factory_displays[4] = draw_tiles(4)
+print_factory_displays()
+permutations_and_hand_states = draw_permutations(factory_displays, middle_display)
+for i, (permutation, hand_states) in enumerate(permutations_and_hand_states):
+    print(f"Permutation {i + 1}: {permutation}")
+    print(f"Hand states: {hand_states}\n")
