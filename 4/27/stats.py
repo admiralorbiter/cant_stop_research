@@ -5,7 +5,7 @@ import random
 import itertools
 import numpy as np
 
-columns = [2, 6, 7]
+columns = [2, 7, 8]
 
 def roll_dice():
     dice = [random.randint(1, 6) for _ in range(4)]
